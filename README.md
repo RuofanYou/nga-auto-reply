@@ -1,130 +1,195 @@
-# NGA 自动顶帖方案
+# 🎯 NGA 自动顶帖工具 - 小白保姆级教程
 
-> 自动化在每天 08:00 和 20:00 回复招募帖以保持活跃
-
----
-
-## 🍪 第一步：获取 NGA Cookie
-
-### 详细步骤（Chrome 浏览器）
-
-1. **打开 NGA 并登录**
-   - 必须访问 `https://bbs.nga.cn/`（不是 ngabbs.cn）
-   - 确保你已登录账号
-
-2. **打开开发者工具**
-   - 按 `F12` 或 `Cmd+Option+I`（Mac）
-   - 或者右键页面 → "检查"
-
-3. **切换到 Application（应用程序）面板**
-   - ⚠️ **重点**：不是 Network，是 **Application**！
-   - 如果看不到，点击 `>>` 展开更多面板
-
-4. **找到 Cookie**
-   - 左侧边栏找到 **Storage（存储）** → **Cookies**
-   - 展开后点击 `https://bbs.nga.cn`
-
-5. **复制关键 Cookie 值**
-   - 找到以下字段并记录它们的 **Value**：
-     - `ngaPassportUid`
-     - `ngaPassportCid`
-     - （可能还有 `lastvisit` 等）
-   - 格式化为：`ngaPassportUid=xxx; ngaPassportCid=yyy`
-
-### 备选方法：从 Network 获取
-
-1. 打开开发者工具 → **Network（网络）** 面板
-2. 刷新页面
-3. 点击第一个请求（通常是 `bbs.nga.cn` 或 `read.php`）
-4. 右侧选择 **Headers（标头）**
-5. 向下滚动找到 **Request Headers** → **Cookie**
-6. 复制整个 Cookie 字符串
+> 每天 **08:00** 和 **20:00** 自动帮你回帖顶帖，完全免费！
 
 ---
 
-## 🚀 第二步：创建独立 GitHub 仓库
+## 📋 你需要准备什么？
 
-在终端中执行以下命令：
-
-```bash
-# 1. 进入目录
-cd /Users/rofan/Cursor/魔兽插件/自动化顶帖
-
-# 2. 初始化 Git 仓库
-git init
-
-# 3. 添加所有文件
-git add .
-
-# 4. 首次提交
-git commit -m "🎉 初始化：NGA自动顶帖工具"
-
-# 5. 在 GitHub 上创建仓库后，添加远程源
-# ⚠️ 替换 YOUR_USERNAME 为你的 GitHub 用户名
-git remote add origin https://github.com/YOUR_USERNAME/nga-auto-reply.git
-
-# 6. 推送到 GitHub
-git branch -M main
-git push -u origin main
-```
+| 需要 | 说明 |
+|------|------|
+| ✅ NGA 账号 | 你必须是帖子的**发帖人**才能顶帖 |
+| ✅ GitHub 账号 | 免费注册：https://github.com/signup |
+| ✅ Chrome 浏览器 | 用来获取 Cookie |
 
 ---
 
-## 🔐 第三步：配置 GitHub Secrets
+## 第一步：注册 GitHub 账号
 
-1. 进入你的 GitHub 仓库
-2. 点击 **Settings** → **Secrets and variables** → **Actions**
-3. 点击 **New repository secret**
-4. 添加以下三个 Secrets：
+如果你已经有 GitHub 账号，跳到第二步。
+
+1. 打开 https://github.com/signup
+2. 输入邮箱、密码、用户名
+3. 完成验证，点击 Create account
+4. 去邮箱点击验证链接
+
+---
+
+## 第二步：复制（Fork）这个项目
+
+1. **点击这个链接**：https://github.com/RuofanYou/nga-auto-reply
+
+2. **点击右上角的 "Fork" 按钮**
+   
+   ![Fork按钮位置](https://docs.github.com/assets/cb-40742/images/help/repository/fork-button.png)
+
+3. 在弹出的页面直接点击 **"Create fork"**
+
+4. 等待几秒，你就拥有了自己的项目副本！
+
+---
+
+## 第三步：获取你的 NGA Cookie（最关键！）
+
+> ⚠️ **Cookie 相当于你的登录凭证，不要分享给任何人！**
+
+### 3.1 打开 NGA 并登录
+
+- 必须访问这个地址：**https://bbs.nga.cn/**
+- 确保你已经登录了你的账号
+
+### 3.2 打开浏览器开发者工具
+
+**Windows 用户**：按键盘 `F12`  
+**Mac 用户**：按 `Cmd + Option + I`
+
+会弹出一个工具面板（通常在右边或下边）
+
+### 3.3 找到 Cookie
+
+1. 点击顶部的 **"Application"**（应用程序）标签
+   - 如果看不到，点击 `>>` 展开更多
+   
+2. 在左边找到 **Storage（存储）** → **Cookies** → 点击 **https://bbs.nga.cn**
+
+3. 你会看到一个表格，找到这两行：
 
 | Name | Value |
 |------|-------|
-| `NGA_COOKIE` | `ngaPassportUid=xxx; ngaPassportCid=yyy`（你的Cookie） |
-| `NGA_TID` | `28917800`（你的帖子ID） |
-| `NGA_FID` | `306`（魔兽世界版块） |
+| `ngaPassportUid` | 一串数字（比如 12345678） |
+| `ngaPassportCid` | 一长串字母数字 |
+
+4. **分别双击 Value 列，复制这两个值**
+
+5. 按下面格式组合成一行（注意分号和空格）：
+   ```
+   ngaPassportUid=你的数字; ngaPassportCid=你的长串
+   ```
+   
+   **示例**：
+   ```
+   ngaPassportUid=12345678; ngaPassportCid=abc123def456ghi789
+   ```
 
 ---
 
-## ✅ 第四步：测试运行
+## 第四步：获取你的帖子 ID
 
-### 手动触发测试
-1. 进入仓库 → **Actions** 标签页
-2. 左侧选择 **NGA Auto Reply**
-3. 点击 **Run workflow** → **Run workflow**
-4. 查看运行日志确认是否成功
+1. 打开你要顶的帖子
+2. 看浏览器地址栏，找到 `tid=` 后面的数字
 
-### 查看定时任务
-工作流会在每天 **08:00** 和 **20:00**（北京时间）自动运行。
+   **例如**：`https://bbs.nga.cn/read.php?tid=28917800`
+   
+   这里的帖子 ID 就是 **28917800**
 
 ---
 
-## 📁 文件说明
+## 第五步：配置你的项目
 
-| 文件 | 用途 |
-|------|------|
-| `nga_reply.py` | Python 回帖脚本 |
-| `config.example.yaml` | 本地测试用配置模板 |
-| `.github/workflows/nga-auto-reply.yml` | GitHub Actions 工作流 |
-| `requirements.txt` | Python 依赖 |
-| `replies.txt` | 预设回复内容（每行一条，随机选择） |
+### 5.1 进入你 Fork 的项目
+
+1. 打开 https://github.com
+2. 点击右上角你的头像 → **Your repositories**
+3. 找到并点击 **nga-auto-reply**
+
+### 5.2 添加密钥（Secrets）
+
+1. 点击项目页面的 **Settings**（设置）标签
+
+2. 在左边菜单找到 **Secrets and variables** → 点击 **Actions**
+
+3. 点击绿色按钮 **"New repository secret"**
+
+4. **添加第一个密钥**：
+   - Name（名称）：`NGA_COOKIE`
+   - Secret（值）：粘贴你在第三步组合的 Cookie
+   - 点击 **Add secret**
+
+5. **添加第二个密钥**（再点一次 New repository secret）：
+   - Name：`NGA_TID`
+   - Secret：你的帖子 ID（比如 28917800）
+   - 点击 **Add secret**
+
+6. **添加第三个密钥**：
+   - Name：`NGA_FID`
+   - Secret：`306`（魔兽世界版块就填 306）
+   - 点击 **Add secret**
+
+### 5.3 确认添加成功
+
+回到 Secrets 页面，你应该能看到三个密钥：
+- `NGA_COOKIE`
+- `NGA_TID`
+- `NGA_FID`
 
 ---
 
-## ⚠️ 注意事项
+## 第六步：启用自动运行
 
-- **Cookie 有效期**：NGA Cookie 几个月后可能过期，需更新
-- **频率限制**：每天仅 2 次，符合 NGA 规则
-- **时间延迟**：GitHub Actions 可能有 5-15 分钟延迟
-- **安全性**：Cookie 只存在 GitHub Secrets 中，不会泄露
+1. 进入你的项目页面
+
+2. 点击顶部的 **Actions** 标签
+
+3. 如果看到黄色提示框，点击 **"I understand my workflows, go ahead and enable them"**
+
+4. 点击左边的 **"NGA Auto Reply"**
+
+5. 点击右边的 **"Run workflow"** → 再点击绿色的 **"Run workflow"**
+
+6. 等待约 30 秒，刷新页面，看到 ✅ 绿色勾就成功了！
 
 ---
 
-## �️ 本地测试
+## 🎉 完成！
 
-```bash
-cd /Users/rofan/Cursor/魔兽插件/自动化顶帖
-pip install -r requirements.txt
-cp config.example.yaml config.yaml
-# 编辑 config.yaml 填入你的 Cookie
-python nga_reply.py
-```
+从现在开始，系统会在每天 **08:00** 和 **20:00**（北京时间）自动帮你回帖！
+
+---
+
+## ❓ 常见问题
+
+### Q: 运行失败了怎么办？
+
+点击失败的运行记录，查看错误日志。最常见的原因：
+- Cookie 复制不完整或格式错误
+- 帖子 ID 填错了
+
+### Q: Cookie 会过期吗？
+
+会的，大约几个月后过期。过期后重新获取 Cookie，更新 `NGA_COOKIE` 密钥即可。
+
+### Q: 时间不准怎么办？
+
+GitHub Actions 可能有 5-15 分钟延迟，这是正常的。
+
+### Q: 可以改成其他时间吗？
+
+需要修改 `.github/workflows/nga-auto-reply.yml` 文件中的 cron 表达式。
+
+### Q: 可以自定义回复内容吗？
+
+可以！编辑项目中的 `replies.txt` 文件，每行一条回复内容。
+
+---
+
+## ⚠️ 安全提醒
+
+- **Cookie 是你的登录凭证**，千万不要分享给任何人
+- GitHub Secrets 是加密存储的，只有你能看到
+- 如果担心安全，可以定期更换 NGA 密码（会使旧 Cookie 失效）
+
+---
+
+## 📞 需要帮助？
+
+如果遇到问题，可以在项目的 Issues 页面提问。

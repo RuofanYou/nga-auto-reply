@@ -81,11 +81,12 @@ def reply_post(config: dict, content: str) -> bool:
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Referer": f"https://bbs.nga.cn/read.php?tid={config['tid']}",
         "Origin": "https://bbs.nga.cn",
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/x-www-form-urlencoded; charset=GBK",
     }
     
     cookies = parse_cookies(config["cookie"])
     
+    # NGA 使用 GBK 编码，需要将中文内容编码为 GBK
     data = {
         "action": "reply",
         "fid": config["fid"],
@@ -94,8 +95,19 @@ def reply_post(config: dict, content: str) -> bool:
         "step": 2,
     }
     
+    # 手动编码为 GBK 格式的 URL 编码字符串
+    encoded_parts = []
+    for key, value in data.items():
+        # 将值编码为 GBK，然后进行 URL 编码
+        if isinstance(value, str):
+            encoded_value = requests.utils.quote(value.encode('gbk'))
+        else:
+            encoded_value = str(value)
+        encoded_parts.append(f"{key}={encoded_value}")
+    encoded_data = "&".join(encoded_parts)
+    
     try:
-        resp = requests.post(url, headers=headers, cookies=cookies, data=data, timeout=30)
+        resp = requests.post(url, headers=headers, cookies=cookies, data=encoded_data, timeout=30)
         
         # NGA 返回的是 GBK 编码的 HTML
         resp.encoding = "gbk"

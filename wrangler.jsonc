@@ -1,0 +1,77 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "jojo-creative-radar",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-20",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/api/*",
+      "/mcp",
+      "/mcp/*",
+      "/evidence/*"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "jojo-creative-radar-db",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "ARTIFACTS",
+      "bucket_name": "jojo-creative-radar-artifacts"
+    }
+  ],
+  "queues": {
+    "producers": [
+      {
+        "binding": "PIPELINE_QUEUE",
+        "queue": "jojo-creative-radar-pipeline"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "jojo-creative-radar-pipeline",
+        "max_batch_size": 5,
+        "max_batch_timeout": 5,
+        "max_retries": 3,
+        "dead_letter_queue": "jojo-creative-radar-dead",
+        "max_concurrency": 2,
+        "retry_delay": 60
+      }
+    ]
+  },
+  "ai": {
+    "binding": "AI"
+  },
+  "browser": {
+    "binding": "BROWSER"
+  },
+  "triggers": {
+    "crons": [
+      "20 0 * * *",
+      "30 1 * * *",
+      "45 1 * * MON",
+      "0 2 1 * *"
+    ]
+  },
+  "vars": {
+    "APP_NAME": "叫叫投放选品雷达",
+    "ENVIRONMENT": "production",
+    "MAX_DAILY_ANALYSIS": "80",
+    "ADMUSE_ENABLED": "true"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}

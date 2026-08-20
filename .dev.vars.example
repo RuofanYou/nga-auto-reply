@@ -1,0 +1,5 @@
+# Local-only values. Never commit the real file.
+ADMIN_TOKEN=replace-with-a-long-random-token
+# Optional authenticated session cookie for admuse.qq.com.
+# Paste only into this local secret file or Cloudflare Secrets, never into ChatGPT.
+ADMUSE_COOKIE=
